@@ -1,22 +1,19 @@
-"use client";
-
 import * as React from "react";
-import NextjsToploader from "nextjs-toploader";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
+import SoundProvider from "@/components/provider/sound.provider";
+import { Toggle } from "@/components/shared/toggle";
+import { Footer } from "@/components/shared/footer";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function Provider({
   children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <NextThemesProvider {...props}>
-      <Header />
-      <NextjsToploader showSpinner={false} color={"var(--primary)"} />
+    <SoundProvider>
+      <Toggle />
+      <Toaster richColors theme="dark" />
       <main className="flex-1">{children}</main>
       <Footer />
-    </NextThemesProvider>
+    </SoundProvider>
   );
 }

@@ -1,12 +1,10 @@
 import { Header } from "@/components/shared/header";
-import { HeroSection } from "./_components/hero";
 import { MessagesSection } from "./_components/messages";
 
-export default function Home() {
+export default function ProjectDetails() {
   return (
     <div className="flex flex-col">
-      <Header isHomeRoute={true} />
-      <HeroSection />
+      <Header />
       <MessagesSection />
     </div>
   );

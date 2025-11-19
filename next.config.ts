@@ -2,8 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  reactCompiler: true,
   images: {
-    qualities: [70, 80, 90, 100],
+    qualities: [100],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "framerusercontent.com",
+      },
+    ],
   },
 };
 

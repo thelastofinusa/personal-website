@@ -1,68 +1,49 @@
-"use client";
-
-import Link from "next/link";
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
-
-import { Wrapper } from "@/components/wrapper";
-import Image from "next/image";
-
-const heroRoutes = [
-  {
-    path: "https://cal.com",
-    newTab: true,
-    label: "Available",
-    description: "Schedule a call",
-  },
-  { path: "/blog", label: "Blog", description: "Read my blog" },
-  { path: "/contact", label: "Contact", description: "Get in touch" },
-];
+import { formatDateTime } from "@/lib/utils";
+import { Wrapper } from "@/components/shared/wrapper";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const HeroSection = () => {
   return (
-    <div className="py-12 sm:py-16 md:py-[100px]">
-      <Wrapper className="flex flex-col gap-8">
-        <div className="flex flex-col items-center gap-4 sm:max-w-[400px] sm:items-start">
-          <PhotoProvider loop={1}>
-            <PhotoView src="/img.avif">
-              <div className="bg-secondary group size-24 overflow-hidden rounded-3xl sm:size-16 sm:rounded-2xl">
-                <Image
-                  src="/img.avif"
-                  alt="img"
-                  width={96}
-                  height={96}
-                  priority
-                  quality={100}
-                  className="size-full object-cover transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-3"
-                />
-              </div>
-            </PhotoView>
-          </PhotoProvider>
-
-          <h1 className="text-center text-2xl leading-[1.3] font-medium sm:text-start sm:text-3xl md:text-[32px]">
-            iBuild Onchain <br />
-            iEducate the next wave
-          </h1>
+    <div className="pt-12">
+      <Wrapper className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex size-full flex-col items-center justify-center gap-4">
+          <div className="relative size-max rounded-full">
+            <Avatar size="lg">
+              <AvatarImage src="img.jpg" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <span className="border-background absolute right-0 bottom-0 size-3.5 rounded-full border-2 bg-green-500" />
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-base leading-none font-medium sm:text-lg">
+              Abdullahi Inusa Salihu
+            </p>
+            <p className="text-muted-foreground hover:text-foreground cursor-pointer font-mono text-xs font-medium transition duration-200 ease-out sm:text-[13px] dark:opacity-50 dark:hover:opacity-100">
+              @thelastofinusa
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 flex-col items-center gap-3 sm:grid-cols-3 sm:flex-row md:flex">
-          {heroRoutes.map((route, index) => (
-            <Link
-              href={route.path}
-              key={route.path ?? index}
-              target={route.newTab ? "_blank" : "_self"}
-              className="bg-background dark:bg-secondary/30 border-border/50 dark:border-border/30 flex w-full flex-col gap-0.5 rounded-[14px] border px-4 py-3 shadow-xs first-of-type:col-span-2 sm:first-of-type:col-span-1 md:max-w-[200px]"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-sm font-medium opacity-60">{route.label}</p>
-                <BiDotsHorizontalRounded className="size-4 opacity-40" />
-              </div>
+        <div className="mx-auto flex max-w-sm flex-col gap-1 text-center">
+          <p className="text-foreground text-sm font-normal sm:text-base">
+            Web3 Frontend Engineer. iBuild Onchain. <br />{" "}
+            <span className="text-primary font-bold">Open Source</span>{" "}
+            Contributor.
+          </p>
+        </div>
 
-              <p className="text-foreground text-base font-medium sm:text-sm">
-                {route.description}
-              </p>
-            </Link>
-          ))}
+        <div className="mx-auto flex max-w-sm flex-col gap-1 text-center">
+          <p className="text-muted-foreground text-[13px] font-medium sm:text-sm dark:opacity-50">
+            Est. 2003 · Kaduna, Nigeria · he/him
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="bg-border/60 h-px flex-1" />
+          <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase sm:text-xs dark:opacity-50">
+            {formatDateTime()}
+          </p>
+          <span className="bg-border/60 h-px flex-1" />
         </div>
       </Wrapper>
     </div>
