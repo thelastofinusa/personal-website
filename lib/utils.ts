@@ -5,9 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDateTime() {
+export function formatDateTime(): string {
   const d = new Date();
-
   const day = d.getDate().toString().padStart(2, "0");
 
   const weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -27,41 +26,57 @@ export function formatDateTime() {
 export function extractDomain(input: string): string {
   const targets = ["thelastofinusa.vercel.app", "localhost:3000"];
 
-  let url: URL | null = null;
+  const parsePath = (path: string): string => {
+    const clean = path.replace(/^\/+/, ""); // remove leading "/"
+    let parts = clean.split("/");
 
-  try {
-    if (input.startsWith("http://") || input.startsWith("https://")) {
-      url = new URL(input);
-    } else {
-      url = new URL("http://" + input);
+    // Always return the last two segments
+    if (parts.length >= 2) {
+      parts = parts.slice(-2);
     }
+
+    return parts.join(" · ");
+  };
+
+  // Case 1: raw path
+  if (input.startsWith("/")) {
+    return parsePath(input);
+  }
+
+  // Case 2: full URL
+  let url: URL;
+  try {
+    url = input.startsWith("http")
+      ? new URL(input)
+      : new URL("http://" + input);
   } catch {
     return input;
   }
 
   const host = url.host;
-  const path = url.pathname.replace(/^\/+/, "");
 
-  const matchesTarget = targets.includes(host);
+  if (targets.includes(host)) {
+    return parsePath(url.pathname);
+  }
 
-  if (matchesTarget) return path;
-
-  const slash = input.indexOf("/");
-  if (slash < 0) return host;
   return host;
+}
+
+export function getInitials(name: string): string {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+
+  if (parts.length === 1) {
+    return parts[0][0].toUpperCase();
+  }
+
+  const first = parts[0][0];
+  const last = parts[parts.length - 1][0];
+
+  return (first + last).toUpperCase();
 }
 
 export function isActivePath(path: string, pathname: string): boolean {
   if (path === "/") return pathname === "/";
   return pathname.startsWith(path);
-}
-
-export function assertValue<T>(
-  v: T | undefined,
-  errorMessage?: string,
-): NonNullable<T> {
-  if (v === undefined || v === null) {
-    throw new Error(errorMessage ?? "Missing property");
-  }
-  return v;
 }

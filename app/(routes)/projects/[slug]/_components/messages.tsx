@@ -1,12 +1,26 @@
-import { MessageBubble } from "@/components/shared/bubble";
-import { Wrapper } from "@/components/shared/wrapper";
-import { workMessages } from "@/lib/constants";
+"use client";
 
-export const MessagesSection = () => {
+import React from "react";
+import { useGlobalContext } from "@/components/provider/global";
+import { Bubble } from "@/components/shared/bubble";
+import { Wrapper } from "@/components/shared/wrapper";
+import { projectDetailsMessages } from "@/lib/messages";
+
+interface Props {
+  slug: string;
+}
+
+export const MessagesSection: React.FC<Props> = ({ slug }) => {
+  const { fetchSuggestions } = useGlobalContext();
+
+  React.useEffect(() => {
+    fetchSuggestions(projectDetailsMessages);
+  }, [fetchSuggestions]);
+
   return (
-    <div className="mt-[123px] w-full pt-8 pb-10 sm:py-12">
+    <div className="w-full pt-8 pb-24! sm:py-12">
       <Wrapper>
-        <MessageBubble messages={workMessages} />
+        <Bubble messages={projectDetailsMessages} />
       </Wrapper>
     </div>
   );

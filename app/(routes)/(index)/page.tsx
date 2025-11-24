@@ -4,7 +4,7 @@ import { MessagesSection } from "./_components/messages";
 
 export default function Home() {
   return (
-    <div className="flex flex-col">
+    <div className="h-full">
       <Header isHomeRoute={true} />
       <HeroSection />
       <MessagesSection />

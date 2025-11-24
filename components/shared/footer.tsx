@@ -1,97 +1,94 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect } from "react";
-import { motion, useAnimation } from "motion/react";
-import { HiOutlineArrowSmUp } from "react-icons/hi";
+import React from "react";
+import { GrSend } from "react-icons/gr";
 
 import { Wrapper } from "./wrapper";
-import { Button } from "../ui/button";
-import { footerRoutes } from "@/lib/constants";
-import { usePathname } from "next/navigation";
-import { cn, isActivePath } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+import { Suggestion, Suggestions } from "@/components/ui/suggestion";
+import { useGlobalContext } from "@/components/provider/global";
+import { Skeleton } from "../ui/skeleton";
+import { toast } from "sonner";
+import { Badge } from "../ui/badge";
 
 export const Footer = () => {
-  const controls = useAnimation();
-  const pathname = usePathname();
+  const {
+    suggestions: { data, isLoading },
+  } = useGlobalContext();
 
-  const scrollTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const [selectedSuggestion, setSelectedSuggestion] = React.useState<
+    string | null
+  >(null);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSelectedSuggestion(suggestion);
   };
 
-  useEffect(() => {
-    const onScroll = () => {
-      if (window.scrollY > 100) {
-        controls.start({ opacity: 1 });
-      } else {
-        controls.start({ opacity: 0 });
-      }
-    };
-
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [controls]);
+  function sendSuggestion() {
+    if (selectedSuggestion) {
+      toast.info(selectedSuggestion);
+      setSelectedSuggestion(null);
+    }
+  }
 
   return (
-    <footer className="pt-4 pb-8">
-      <Wrapper className="flex size-full flex-col items-center justify-center gap-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={controls}
-          transition={{ duration: 0.15 }}
-        >
+    <footer className="bg-background/50 fixed bottom-0 z-50 w-full backdrop-blur-3xl sm:backdrop-blur-sm">
+      <Wrapper className="flex flex-col gap-2 py-4">
+        <div className="flex flex-wrap gap-2">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, idx) => (
+                <Skeleton
+                  key={idx}
+                  className="bg-muted h-5 w-[200px] rounded-full"
+                />
+              ))
+            : data.map((suggestion) => (
+                <Badge
+                  key={suggestion}
+                  className="cursor-pointer"
+                  variant={"secondary"}
+                  aria-disabled={
+                    String(selectedSuggestion).toLowerCase() ===
+                    String(suggestion).toLowerCase()
+                  }
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </Badge>
+              ))}
+        </div>
+        {/* <Suggestions>
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, idx) => (
+                <Skeleton
+                  key={idx}
+                  className="bg-muted h-5 w-[200px] rounded-full"
+                />
+              ))
+            : data.map((suggestion) => (
+                <Suggestion
+                  key={suggestion}
+                  onClick={handleSuggestionClick}
+                  suggestion={suggestion}
+                />
+              ))}
+        </Suggestions> */}
+        {/* <div className="flex items-center gap-1 sm:gap-2">
+          <Input
+            className="bg-background/50 pointer-events-none flex-1 text-sm! backdrop-blur-3xl sm:backdrop-blur-xl"
+            placeholder="Pick a suggestion from above..."
+            defaultValue={selectedSuggestion || ""}
+          />
           <Button
-            size="icon"
-            variant={"secondary"}
-            className="relative size-10 rounded-full"
-            onClick={scrollTop}
+            size={"icon"}
+            onClick={sendSuggestion}
+            disabled={!selectedSuggestion || data.length === 0}
           >
-            <HiOutlineArrowSmUp className="size-5!" />
-            <span className="sr-only">Back to top</span>
+            <GrSend className="size-4" />
           </Button>
-        </motion.div>
-
-        <div className="mt-2 flex flex-wrap justify-center gap-4 text-sm">
-          {footerRoutes.routes.map((link, index) => {
-            const isActive = isActivePath(link.href, pathname);
-
-            return (
-              <Link
-                key={index}
-                href={link.href}
-                className={cn(
-                  "text-muted-foreground hover:text-primary block duration-150",
-                  {
-                    "text-primary": isActive,
-                  },
-                )}
-              >
-                <span>{link.title}</span>
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
-            {footerRoutes.socials.map((social) => (
-              <Link
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.name}
-                className="text-muted-foreground hover:text-primary block"
-              >
-                <social.icon className="size-5" />
-              </Link>
-            ))}
-          </div>
-          <span className="text-muted-foreground dark:text-foreground block text-center text-sm dark:opacity-50">
-            © {new Date().getFullYear()} All rights reserved
-          </span>
-        </div>
+        </div> */}
       </Wrapper>
     </footer>
   );

@@ -1,13 +1,16 @@
-import { MessageBubble } from "@/components/shared/bubble";
-import { Wrapper } from "@/components/shared/wrapper";
-import { reviewsMessages } from "@/lib/constants";
+"use client";
+
+import React from "react";
+import { useGlobalContext } from "@/components/provider/global";
+import { Bubble } from "@/components/shared/bubble";
+import { reviewsMessages } from "@/lib/messages";
 
 export const MessagesSection = () => {
-  return (
-    <div className="mt-[123px] w-full pt-8 pb-10 sm:py-12">
-      <Wrapper>
-        <MessageBubble messages={reviewsMessages} />
-      </Wrapper>
-    </div>
-  );
+  const { fetchSuggestions } = useGlobalContext();
+
+  React.useEffect(() => {
+    fetchSuggestions(reviewsMessages);
+  }, [fetchSuggestions]);
+
+  return <Bubble messages={reviewsMessages} />;
 };
