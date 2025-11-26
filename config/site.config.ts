@@ -14,7 +14,7 @@ export const siteConfig = {
   title: "Devfolio",
   url: "https://thelastofinusa.vercel.app",
   ogImage: "https://thelastofinusa.vercel.app/og.jpg",
-  description: "iBuild the web3 future and cool stuff - Let's connect 💬",
+  description: "iBuild the web3 future and cool stuff 😃",
   links: {
     twitter: "https://x.com/thelastofinusa",
   },
