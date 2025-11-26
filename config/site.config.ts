@@ -18,18 +18,4 @@ export const siteConfig = {
   links: {
     twitter: "https://x.com/thelastofinusa",
   },
-  navItems: [
-    {
-      label: "Docs",
-      href: "/docs",
-    },
-    {
-      label: "Components",
-      href: "/docs/components",
-    },
-    {
-      label: "Colors",
-      href: "/colors",
-    },
-  ],
 };
