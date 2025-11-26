@@ -47,7 +47,7 @@ export const ProjectBubble: React.FC<Props> = ({ message }) => {
       </div>
 
       {message?.project?.description && (
-        <pre className="font-sans text-sm font-normal whitespace-pre-wrap sm:text-base">
+        <pre className="font-sans text-sm font-normal whitespace-pre-wrap">
           {message?.project?.description}
         </pre>
       )}
