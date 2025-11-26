@@ -2,46 +2,32 @@
 
 import React from "react";
 
-import { MessageType } from "@/lib/messages";
-import { ThemeProvider } from "./theme";
-
-type AutioProps = {
-  isMuted: boolean;
-  setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
+type AudioContextProps = {
+  isAudioMuted: boolean;
+  setIsAudioMuted: React.Dispatch<React.SetStateAction<boolean>>;
   isAudioReady: boolean;
   playAudio: (isAnonymous: boolean) => void;
 };
 
-interface GlobalContextProps extends AutioProps {
-  suggestions: {
-    isLoading: boolean;
-    data: string[];
-  };
-  fetchSuggestions: (messages: MessageType[]) => void;
-}
-
-const GlobalContext = React.createContext<GlobalContextProps | undefined>(
+const AudioContext = React.createContext<AudioContextProps | undefined>(
   undefined,
 );
 
-function GlobalProvider(props: { children: React.ReactNode }) {
-  //! -----------------------------------------------------
-  //! Audio Setup
-  //! -----------------------------------------------------
-  const [isMuted, setIsMuted] = React.useState<boolean>(true);
+function AudioProvider(props: { children: React.ReactNode }) {
+  const [isAudioMuted, setIsAudioMuted] = React.useState<boolean>(true);
 
   //* Load saved mute state on mount
   React.useEffect(() => {
-    const saved = localStorage.getItem("isMuted");
+    const saved = localStorage.getItem("isAudioMuted");
     if (saved !== null) {
-      setIsMuted(saved === "true");
+      setIsAudioMuted(saved === "true");
     }
   }, []);
 
   //* Save mute state on change
   React.useEffect(() => {
-    localStorage.setItem("isMuted", String(isMuted));
-  }, [isMuted]);
+    localStorage.setItem("isAudioMuted", String(isAudioMuted));
+  }, [isAudioMuted]);
 
   const [isAudioReady, setIsAudioReady] = React.useState<boolean>(false);
 
@@ -117,7 +103,7 @@ function GlobalProvider(props: { children: React.ReactNode }) {
 
   const playAudio = React.useCallback(
     (isAnonymous: boolean) => {
-      if (isMuted) return;
+      if (isAudioMuted) return;
       if (!userInteracted) return;
 
       const audio = isAnonymous
@@ -129,80 +115,32 @@ function GlobalProvider(props: { children: React.ReactNode }) {
         audio.play().catch(() => {});
       }
     },
-    [isMuted, userInteracted],
+    [isAudioMuted, userInteracted],
   );
 
-  //! -----------------------------------------------------
-  //! Suggestion Setup
-  //! -----------------------------------------------------
-  const [suggestions, setSuggestions] = React.useState<
-    GlobalContextProps["suggestions"]
-  >({
-    isLoading: false,
-    data: [],
-  });
-
-  const fetchSuggestions = React.useCallback(
-    async (messages: Array<MessageType>) => {
-      try {
-        setSuggestions((prev) => ({ ...prev, isLoading: true }));
-
-        const list = messages
-          .filter((m) => m.sender.from === "anonymous")
-          .flatMap((m) =>
-            m.content
-              .filter((c) => c.type === "text")
-              .map((c) => c.suggestion ?? c.message),
-          );
-
-        setSuggestions((prev) => ({ ...prev, data: list }));
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-      } finally {
-        setSuggestions((prev) => ({ ...prev, isLoading: false }));
-      }
-    },
-    [],
-  );
-
-  //! -----------------------------------------------------
-  //! Context Value
-  //! -----------------------------------------------------
   const contextValue = React.useMemo(
     () => ({
-      //* Audio Values
-      isMuted,
-      setIsMuted,
+      isAudioMuted,
+      setIsAudioMuted,
       isAudioReady,
       playAudio,
-
-      //* Suggestion value
-      suggestions,
-      fetchSuggestions,
     }),
-    [fetchSuggestions, isAudioReady, isMuted, playAudio, suggestions],
+    [isAudioReady, isAudioMuted, playAudio],
   );
 
   return (
-    <GlobalContext.Provider value={contextValue}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        {props.children}
-      </ThemeProvider>
-    </GlobalContext.Provider>
+    <AudioContext.Provider value={contextValue}>
+      {props.children}
+    </AudioContext.Provider>
   );
 }
 
-const useGlobalContext = () => {
-  const context = React.useContext(GlobalContext);
+function useAudioContext() {
+  const context = React.useContext(AudioContext);
   if (context === undefined) {
-    throw new Error("useGlobalContext must be used within a GlobalProvider");
+    throw new Error("useAudioContext must be used within a AudioProvider");
   }
   return context;
-};
+}
 
-export { GlobalProvider, useGlobalContext };
+export { AudioProvider, useAudioContext };

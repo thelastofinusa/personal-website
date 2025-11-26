@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { TextBubble } from "./text.bubble";
 import {
   Form,
   FormControl,
@@ -14,21 +13,21 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { FormType } from "@/lib/messages";
+import { MessageType } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
-  message: FormType;
+  message: MessageType["content"][0];
 }
 
 export const FormBubble: React.FC<Props> = ({ message }) => {
   const fields = React.useMemo(() => {
     const f: { name: string; error: string }[] = [];
 
-    if (message.fields && message.fields.length > 0) {
-      for (const item of message.fields) {
+    if (message?.fields && message?.fields?.length > 0) {
+      for (const item of message?.fields) {
         f.push({
           name: item.name,
           error: item.error ?? "Field is required",
@@ -82,61 +81,60 @@ export const FormBubble: React.FC<Props> = ({ message }) => {
     }
   }
 
+  if (!message.fields) return null;
+
   return (
-    <div className="flex flex-col gap-2">
-      <TextBubble message={message} />
+    <div className="relative flex flex-col">
+      <pre className="font-sans text-sm font-normal whitespace-pre-wrap sm:text-base">
+        {message.message}
+      </pre>
 
-      <div className="mb-1.5 flex flex-col gap-1.5">
-        {message.fields.length > 0 && (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="my-1.5 flex flex-col gap-1.5"
-            >
-              {message.fields.map((fField, idx) => {
-                const Field = fField.field === "input" ? Input : Textarea;
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="my-1.5 flex flex-col gap-1"
+        >
+          {message.fields.map((item, idx) => {
+            const Field = item.field === "input" ? Input : Textarea;
 
-                return (
-                  <FormField
-                    key={idx}
-                    control={form.control}
-                    name={fField.name}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Field
-                            autoComplete="off"
-                            type={fField.type}
-                            placeholder={fField.placeholder}
-                            {...field}
-                            disabled={isSubmitting}
-                            aria-invalid={!!form.formState.errors[field.name]}
-                            value={
-                              typeof field.value === "string" ? field.value : ""
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage className="ml-3" />
-                      </FormItem>
-                    )}
-                  />
-                );
-              })}
+            return (
+              <FormField
+                key={idx}
+                control={form.control}
+                name={item.name}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Field
+                        {...field}
+                        type={item.type}
+                        placeholder={item.placeholder}
+                        disabled={isSubmitting}
+                        aria-invalid={!!form.formState.errors[field.name]}
+                        value={
+                          typeof field.value === "string" ? field.value : ""
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage className="ml-3" />
+                  </FormItem>
+                )}
+              />
+            );
+          })}
 
-              <Button
-                size="lg"
-                type="submit"
-                variant="secondary"
-                className="w-full"
-                isLoading={isSubmitting}
-                loadingText="Please wait..."
-              >
-                <span>{isSubmitSuccessful ? "Thanks!" : "Send Message"}</span>
-              </Button>
-            </form>
-          </Form>
-        )}
-      </div>
+          <Button
+            size="lg"
+            type="submit"
+            variant="secondary"
+            className="w-full"
+            isLoading={isSubmitting}
+            loadingText="Please wait..."
+          >
+            <span>{isSubmitSuccessful ? "Thanks!" : "Send Message"}</span>
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 };

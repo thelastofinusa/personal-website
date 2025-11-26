@@ -8,13 +8,15 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   images: {
-    qualities: [100],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "framerusercontent.com",
+        hostname: "cdn.sanity.io",
+        pathname: `/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/**`,
       },
     ],
+    formats: ["image/webp", "image/avif"],
+    qualities: [100],
   },
 };
 

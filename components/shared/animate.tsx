@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
 
 interface Props extends React.PropsWithChildren {
   className?: string;
@@ -20,7 +21,7 @@ export const AnimateBubble: React.FC<Props> = ({ children, className }) => {
         bounce: 0.2,
         scale: { delay: 0.1 },
       }}
-      className={className}
+      className={cn("", className)}
     >
       {children}
     </motion.div>

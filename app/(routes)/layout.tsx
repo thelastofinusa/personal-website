@@ -1,19 +1,21 @@
+import { Suspense } from "react";
 import NextTopLoader from "nextjs-toploader";
 
-import { GlobalProvider } from "../../components/provider/global";
+import Provider from "../provider";
 import { Toaster } from "@/components/ui/sonner";
-import { Settings } from "@/components/shared/settings";
+import { Header } from "@/components/shared/header";
 
-export default function RoutesLayout(
-  props: LayoutProps<"/">,
-): React.JSX.Element {
+export default function RoutesLayout(props: {
+  children: React.ReactNode;
+}): React.JSX.Element {
   return (
-    <GlobalProvider>
-      <Settings />
-      <Toaster richColors />
+    <Provider>
       <NextTopLoader color="var(--primary)" showSpinner={false} />
-      <main className="flex-1">{props.children}</main>
-      {/* <Footer /> */}
-    </GlobalProvider>
+      <Suspense fallback={<div style={{ height: 64 }} />}> {/* header height placeholder */}
+        <Header />
+      </Suspense>
+      <main>{props.children}</main>
+      <Toaster richColors />
+    </Provider>
   );
 }

@@ -3,21 +3,19 @@
 
 import React from "react";
 import Link from "next/link";
-import { toast } from "sonner";
 import { RiLink } from "react-icons/ri";
 
 import { glimpse } from "@/lib/glimpse";
-import { LinkType } from "@/lib/messages";
-import { TextBubble } from "./text.bubble";
-import { cn, extractDomain } from "@/lib/utils";
+import { MessageType } from "@/lib/types";
+import { extractDomain } from "@/lib/utils";
 
 interface Props {
-  message: LinkType;
+  message: MessageType["content"][0];
 }
 
 export const LinkBubble: React.FC<Props> = ({ message }) => {
   const [imgSrc, setImgSrc] = React.useState<string | null>(
-    message.image || null,
+    message?.link?.image || null,
   );
 
   const [metadata, setMetadata] = React.useState<{
@@ -25,15 +23,15 @@ export const LinkBubble: React.FC<Props> = ({ message }) => {
     description: string | null;
     image: string | null;
   }>({
-    title: message.title || null,
-    description: message.description || null,
-    image: message.image || null,
+    title: message?.link?.title || null,
+    description: message?.link?.description || null,
+    image: message?.link?.image || null,
   });
 
   React.useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const data = await glimpse(message.url);
+        const data = await glimpse(String(message?.link?.url));
 
         setMetadata((prev) => ({
           title: data.title || prev.title,
@@ -46,25 +44,24 @@ export const LinkBubble: React.FC<Props> = ({ message }) => {
         }
       } catch (error) {
         console.log("Error:", error);
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : "Oops! Something went wrong.",
-        );
       }
     };
 
     fetchMetadata();
   }, [message]);
 
+  if (!message?.link) return null;
+
   return (
-    <div className="flex flex-col gap-2">
-      <TextBubble message={message} />
+    <div className="relative flex flex-col">
+      <pre className="font-sans text-sm font-normal whitespace-pre-wrap sm:text-base">
+        {message.message}
+      </pre>
 
       <Link
         target="_blank"
-        href={{ pathname: message.url }}
-        className="bg-secondary my-1.5 flex flex-col rounded-lg"
+        href={{ pathname: message.link.url }}
+        className="bg-secondary my-1.5 flex flex-col overflow-hidden rounded-sm"
       >
         {imgSrc && (
           <img
@@ -72,12 +69,12 @@ export const LinkBubble: React.FC<Props> = ({ message }) => {
             src={imgSrc}
             onError={() => setImgSrc(null)}
             loading="eager"
-            className={cn("aspect-120/63 w-full rounded-t-md object-cover")}
+            className="aspect-120/63 w-full object-cover"
           />
         )}
 
         <div className="flex flex-col p-3">
-          <p className="line-clamp-1 text-sm leading-none sm:text-base">
+          <p className="line-clamp-1 text-sm leading-none sm:text-[15px]">
             {metadata.title}
           </p>
 
@@ -87,7 +84,7 @@ export const LinkBubble: React.FC<Props> = ({ message }) => {
 
           <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
             <RiLink className="mt-px size-3.5" />
-            <span>{extractDomain(message.url)}</span>
+            <span>{extractDomain(message.link.url)}</span>
           </p>
         </div>
       </Link>

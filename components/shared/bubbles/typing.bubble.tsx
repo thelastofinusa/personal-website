@@ -1,9 +1,12 @@
+"use client";
+
 import React from "react";
 import { motion } from "motion/react";
 
-import { MessageType } from "@/lib/messages";
+import { MessageType } from "@/lib/types";
 import { cn, getInitials } from "@/lib/utils";
 import * as Avatar from "@/components/ui/avatar";
+import { AnimateBubble } from "../animate";
 
 interface Props {
   message: MessageType;
@@ -29,9 +32,7 @@ export const TypingBubble: React.FC<Props> = ({ message }) => {
         </Avatar.Avatar>
       )}
 
-      <motion.div
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
+      <AnimateBubble
         className={cn(
           "relative flex max-w-[280px] origin-top-left flex-col gap-1.5 sm:max-w-[308px]",
           isAnonymous && "origin-top-right",
@@ -41,7 +42,7 @@ export const TypingBubble: React.FC<Props> = ({ message }) => {
           width="16"
           height="16"
           className={cn(
-            "fill-muted absolute -top-1.5 right-auto left-0 scale-x-[-1]",
+            "fill-card absolute -top-1.5 right-auto left-0 scale-x-[-1]",
             {
               "fill-primary right-0 left-auto scale-x-[1]": isAnonymous,
             },
@@ -51,11 +52,11 @@ export const TypingBubble: React.FC<Props> = ({ message }) => {
         </svg>
 
         <div
-          className={cn("bg-muted w-fit origin-top-left rounded-xl", {
+          className={cn("bg-card w-fit origin-top-left rounded-xl", {
             "bg-primary origin-top-right text-white!": isAnonymous,
           })}
         >
-          <div className="flex items-center gap-1 p-3">
+          <div className="flex items-center gap-1 p-3.5">
             {[0, 1, 2].map((i) => (
               <motion.span
                 key={i}
@@ -73,7 +74,7 @@ export const TypingBubble: React.FC<Props> = ({ message }) => {
             ))}
           </div>
         </div>
-      </motion.div>
+      </AnimateBubble>
     </div>
   );
 };

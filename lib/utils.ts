@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { MessageContentType } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,6 +22,16 @@ export function formatDateTime(): string {
   const h = hours.toString().padStart(2, "0");
 
   return `${day} ${weekday} ${h}:${minutes} ${ampm}`;
+}
+
+export function formatSanityDate(dateString: string) {
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 }
 
 export function extractDomain(input: string): string {
@@ -79,4 +90,24 @@ export function getInitials(name: string): string {
 export function isActivePath(path: string, pathname: string): boolean {
   if (path === "/") return pathname === "/";
   return pathname.startsWith(path);
+}
+
+export function assertValue<T>(
+  v: T | undefined,
+  errorMessage?: string,
+): NonNullable<T> {
+  if (v === undefined || v === null) {
+    throw new Error(errorMessage ?? "Missing property");
+  }
+  return v;
+}
+
+export function hasSpecialContent(content: MessageContentType) {
+  return !!(
+    content.route ||
+    content.link ||
+    content.project ||
+    (content.buttons && content.buttons.length > 0) ||
+    (content.fields && content.fields.length > 0)
+  );
 }

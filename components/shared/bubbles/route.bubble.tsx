@@ -2,76 +2,37 @@ import React from "react";
 import Link from "next/link";
 import { RiShareForwardFill } from "react-icons/ri";
 
-import { TextBubble } from "./text.bubble";
+import { MessageType } from "@/lib/types";
 import { buttonVariants } from "@/components/ui/button";
-import { RouteType } from "@/lib/messages";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 interface Props {
-  message: RouteType;
+  message: MessageType["content"][0];
 }
 
 export const RouteBubble: React.FC<Props> = ({ message }) => {
   return (
-    <div className="relative flex flex-col gap-2">
-      <TextBubble message={message} />
-
-      {message.images && message.images?.length > 0 && (
-        <div
-          className={cn("mb-1.5 grid grid-cols-2 gap-2", {
-            "grid-cols-1": message.images.length <= 1,
-          })}
-        >
-          {message.images.slice(0, 2).map((img, imgIdx) => {
-            const total = (message.images as string[]).length;
-            const lastVisible = Math.min(1, total - 1);
-            const remaining = total - imgIdx - 1;
-            const showOverlay = imgIdx === lastVisible && remaining > 0;
-
-            return (
-              <div
-                key={imgIdx}
-                className="bg-secondary group relative w-full rounded-md"
-              >
-                <Image
-                  src={img}
-                  alt={message.message}
-                  width={4000}
-                  height={2250}
-                  priority
-                  quality={100}
-                  className="aspect-[1.4] h-auto w-[380px] rounded-md object-cover"
-                />
-
-                {showOverlay && (
-                  <div className="absolute top-0 left-0 flex size-full items-center justify-center rounded-md bg-black/30 backdrop-blur-sm dark:bg-black/70">
-                    <p className="text-lg font-semibold text-white">
-                      +{remaining}
-                    </p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+    <div className="relative flex flex-col">
+      {message.message && (
+        <pre className="font-sans text-sm font-normal whitespace-pre-wrap sm:text-base">
+          {message.message}
+        </pre>
       )}
 
-      {message.path && message.label ? (
-        <div className="mr-1 mb-1 flex justify-end">
+      {message?.route?.label ? (
+        <div className="mt-1 ml-auto">
           <Link
-            target={message.newTab ? "_blank" : "_self"}
-            href={{ pathname: message.path }}
-            className="text-primary font-sans text-xs font-medium whitespace-pre-wrap underline sm:text-sm"
+            target={message?.route?.newTab ? "_blank" : "_self"}
+            href={{ pathname: message?.route?.path }}
+            className="text-primary w-max font-sans text-xs font-semibold whitespace-pre-wrap uppercase underline"
           >
-            {message.label}
+            {message?.route?.label}
           </Link>
         </div>
       ) : (
-        message.path && (
+        message?.route?.path && (
           <Link
-            target={message.newTab ? "_blank" : "_self"}
-            href={{ pathname: message.path }}
+            target={message?.route?.newTab ? "_blank" : "_self"}
+            href={{ pathname: message?.route?.path }}
             className={buttonVariants({
               size: "icon-sm",
               variant: "secondary",
