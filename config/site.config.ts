@@ -9,4 +9,27 @@ export const siteConfig = {
     location: "Abuja, Nigeria",
     pronounce: "he/him",
   },
+
+  name: "Web3 Frontend Engineer",
+  title: "Devfolio",
+  url: "https://thelastofinusa.vercel.app",
+  ogImage: "https://thelastofinusa.vercel.app/og.jpg",
+  description: "iBuild the web3 future and cool stuff - Let's connect 💬",
+  links: {
+    twitter: "https://x.com/thelastofinusa",
+  },
+  navItems: [
+    {
+      label: "Docs",
+      href: "/docs",
+    },
+    {
+      label: "Components",
+      href: "/docs/components",
+    },
+    {
+      label: "Colors",
+      href: "/colors",
+    },
+  ],
 };
